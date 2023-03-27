@@ -1,0 +1,272 @@
+/*----------------------------------------------------------------------------------------------------------------------
+                                            Java Uygulama - 1 
+
+Jaava da maven aracı üzerinden konfigüre ederek bir jar dosyası üretebiliriz bu da,  her cihazda çalıştırılabilir bir 
+dosya oluşturur. Burada sağ tarafta bulunana Maven menülerinde pakage diyerek bir ürün ortaya çıkartabiliriz. Üretilen 
+bu jar dosyası zipli halde javanın dosyalarını barındırır.
+Clean  sekmesi ile de üretilen ürünü silebiliriz (jar dosyası). Maven da bulunan pom.xml dosyası, bir proje geliştirirken 
+projenin iskeleti şeklinde düşünülebilir. Gerekli konfiggürasyonları yaptığımız bir dosyadır. Burada kütüphane belirtme,
+değişken belirleme, versiyon gibi gibi bölümler bulunur
+Burada projenin sürüm bilgisi ismi, gibi gibi bilgileri barındırıyor.Bu maven prom.xml dosyasını düzenleyeceğiz.
+Maven'a terminal üzerinden de erişilebilir. Yani Bunlar terminalden de yapılabilir ve elle de dosyalar ütetilenilir.
+Pakage üretilmesi/ ürün üretilmesi ara ve son aşamada yapılır. Ürün haline getirilir.
+
+                                             MAVEN
+
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.0.4</version>
+    <relativePath/> <!-- lookup parent from repository -->
+</parent>
+    Patent'i bu içerisindeki dependency yönetiyor ileride anlatılacak
+
+
+**** pom.xml de En az bu üç bilginin bulunması yerlidir *****
+
+<groupId>org.csystem</groupId>
+    Paket isimlendirme java da domain ters çevrilecek kullanılır. Bu da projelerde id çakışması önlenir. (Dünya geneli)
+    Domain : csystem.org    
+    Tabi bu isimlendirme dışında istenirse herşey verilebilir ama pratikte isimlendirme yukarıdaki gibi belirlenir. 
+
+
+
+<artifactId>GenericApp</artifactId>
+     son çıktı, prom da plugin ile  konfigure edildiğinde ürünün  adı yani ürün adı
+
+
+<version>1.0.0</version>
+    Ürünümüzün versiyonu,buraya da verisiyonlama yaparız pom.xml conf yapılırsa üretilen jar ın adında da gözükür.
+    yine versiyonlamayı da istediğimiz gibi yapabiliriz, kelime, harf, sembol gibi ama yine genel kabul görmüş
+    belli başlı şemalar mevcut.3 numaralı versiyonun kullanılması iyi bir yöntemdir. Linux gibi bazı sistemler de 
+    bu versiyonlamayı kullanız.
+
+
+
+
+<name>GenericApp</name>
+    ürünün ismi
+
+<description>Generic Application Provider</description>
+    ürünün tanımı
+
+
+
+
+<repositories>
+    <repository>
+        <id>JavaApp1-Mar-2023</id>
+        <url>https://raw.github.com/oguzkaran/javaapp1-mar-2023-maven-repo/main</url>
+    </repository>
+</repositories>
+
+
+
+
+Uzaktan Kullandığımız repoları gösteriyoruz. (GitHub destekliyor.)
+Install sonrası GitHub otomatik indiriyor Kütüphaneleri bu repoya koyabiliriz.
+
+Library: projemizin kullandığı kütüphaneler. Kütüphanelerde de maden dosyası olur onu da pakage ederiz. 
+
+Maven da install yaparsak 
+    her işletim sisteminde uygun yere kurulu olan .m2  diye bir directory oluşur library leri oraya koyar. 
+    Grup id orada bir directory oluşturur (org ) oraya onu koyar versiyon da da aynı şekilde yine directory oluşturur
+    ve jar dosyalarının onun altın a koyar.
+
+
+.m2 maven local reposiyory dir.
+Install maven dersek o kütüphaneyi m2 librarisine dependency olarak gerekli libi o locale kopyalar.
+Projemizin maven dosyasına dependency olarak bu library verirsek artık o projede verdiğimiz kütüphaneyi kullanabiliriz
+
+
+<dependencies>
+    <dependency>
+        <groupId>com.karandev</groupId>
+        <artifactId>com-karandev-util-console</artifactId>
+        <version>14.0.0</version>
+    </dependency>
+</dependencies>
+
+
+3 tip kütüphane erişimi mevcut
+        Local maven reposiyory
+        Central maven reposiyory
+        Remote maven reposiyory
+
+
+Projeyi pakage ettiğimizde Kullandığımız kütüphaneleri de oluşan projemizin içerisine gömer. 
+Bu bir yöntemidir farklı yöntemleri anlatılacak 
+
+Jar -jar Yourapp.jar Şeklinde çalıştırabiliyoruz terminalde.
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+                     
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+ 
+2. Hafta
+
+<properties>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+<properties>
+
+Hedef ve kaynak compiler sürümünü veriyoruz. Burada properties içerisinde sadece sürüm değil farklı işlemler/değişkenler
+de tanımlanabilir.   
+
+
+Peki proje nasıl anlıyor libraryi;
+
+Buradaa projemizin maven’ının içerisinede bulunan pom dosyamızın dependencies bölümüne bu şekilde set diyoruz. 
+Pom dosyası içerisinde plugin(Apache nin maven) ile bunu jarın içerisine gömmesini sağlıyoruz.
+
+
+<dependencies>
+    <dependency>
+        <groupId>com.karandev</groupId>
+        <artifactId>com-karandev-util-console</artifactId>
+        <version>14.0.0</version>
+    </dependency>
+</dependencies>
+
+
+İlk olarak Local repository e bakar 
+İkinci olarak Maven Central a bakar (maven sunucuları)
+Remote a bakar (kendi sunucumuz) GitHub destekliyor 
+Remote ta bulursa indirir ve locale koyar ikinciye gidip url üzerinden bakmaya çalışmaz.
+
+
+<repositories>
+    <repository>
+        <id>JavaApp1-Mar-2023</id>
+        <url>https://raw.github.com/oguzkaran/javaapp1-mar-2023-maven-repo/main</url>
+    </repository>
+</repositories>
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+Yeni projemiz  001-
+
+Her java dosyamızın üzerine Convention koymak yerinde olacaktır.
+örnek Convention;
+----------------------------------------------------------------------
+    FILE        : Point.java
+    AUTHOR      : JavaApp1-Mar-2023 Group
+    LAST UPDATE : 16.03.2023
+
+    Point class that represents the 2(two) dimensional point
+
+    Copyleft (c) 1993 by C and System Programmers Association (CSD)
+    All Rights Free
+-----------------------------------------------------------------------
+
+
+
+
+Yeni projenin Maven dosyası
+        Projemizin pom dosyası——— (ilk derste açıklamaları yapıldı)
+
+        <groupId>org.csystem</groupId>
+        <artifactId>org-csystem-math</artifactId>
+        <version>14.0.0</version>
+        <name>org-csystem-math</name>
+        <description>Math Library</description>
+
+
+Versiyonlama anlamlı olacak ama her şey yazılabilir geliştirene bağlı Beta-alpha-last- aaa-Relase...
+Versiyonlamayı 3 rakamla kullanıyoruz bu yöntem de soldan sağa olmak üzere,
+
+1. Major Number
+    geçmişe yönelik uyumu bu sağlanmıyor. Eski kodlar geldiğinde bu lib de derlenmeyebilir (Radikal değişiklikler)
+2. First Minor Number
+    Eklenti yapıldığında (Eskiye yönelik uyum sağlanır) 
+3. Second Minor Number
+    eklenti yapmadım değişiklik yaptım(Eskiye yönelik uyum sağlanır) (Metodun algoritmasının değişmesi, metod kodları değişti) 
+    (bug fixing kod hızlandırma )
+
+
+
+<version>1.0.0</version>
+    Versiyon isimlerini maven directory olarak kullanıyor, yani versiyon ismi aslında bir klasör oluyor 
+    Versiyon değişikliğinde what is new şeklinde döküümantasyonunda neler yapıldığını, değiştiğini belirmeliyiz
+
+Uygulamayı başlatanın/ tetikleyen şeyi bir sınıf ile temsil ederiz kodlarımızı main içerisine yazmayız. 
+Uygulamanın kendisini bir sınıf ile temsil ediyoruz. Uygulama kullanıldığı library lerle deploy edilir.
+
+Install ve pakage farkı, Projeyi pakage ediyor ve aynı zamanda maven lokalinize yüklüyor (pakage jar üretiyor)
+
+
+
+Library'e projemizin lokalinin içine taşıyoruz.
+Yazılan librarinin jar dosyasını projenin lokaline koyuyoruz. Bunu da pom dosyasında belirtiyoruz
+Dez avantajı librarymiz güncellendiğinde yeni librarry jar dosysasını tekrar koymamız gerek.    
+<scope>system<scope> ve  <systemPath> <systemPath>   belirtilmelidir.
+
+<dependency>
+    <groupId>org.csystem</groupId>
+    <artifactId>org-csystem-math</artifactId>
+    <version>14.0.0</version>
+    <scope>system</scope>
+    <systemPath>${basedir}/libs/org-csystem-math-14.0.0.jar</systemPath>
+</dependency>
+
+
+
+${basedir} ——> pom dosyasının directory sini belirtir 
+
+Bu artık maden Build işleminde lokale, remote, Central  a bakmaz sadece gösterdiğimiz dosya yoluna bakıp jar arar
+
+
+(Bu yöntem şu şekilde uyarı veriyor)
+    Some problems were encountered while building the effective model for org.csystem:SystemPathUsageApp:jar:14.0.0
+    'dependencies.dependency.systemPath' for org.csystem:org-csystem-math:jar should not point at files within the project 
+    directory, ${basedir}/libs/org-csystem-math-14.0.0.jar will be unresolvable by dependent projects @ line 37, column 25
+    It is highly recommended to fix these problems because they threaten the stability of your build.
+    For this reason, future Maven versions might no longer support building such malformed projects.
+
+
+
+Bu yöntemlerle kütüphaneler kullanılabilir:
+        Maven local                     m2 directorysinde 
+        Project local yada disk üzeri    <scope> ve <systemPath> li olan
+        Maven remote                
+        Maven central               
+
+Bu yöntemi kullanırsak pom dosyasında bu düzenlemeyi yapmamız gerek 
+(bunu yapmazsak projemizin içine library i gömmez ve başka bilgisayarda çalışmaz )
+
+
+<plugin>
+    //…
+    //…
+    <configuration>
+            <includeSystemScope>true</includeSystemScope>
+    </configuration>
+
+<plugin>
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    
+----------------------------------------------------------------------------------------------------------------------*/
