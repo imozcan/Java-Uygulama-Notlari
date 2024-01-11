@@ -1,18 +1,183 @@
-Spring anotationlar
+/*----------------------------------------------------------------------------------------------------------------------
+	Spring proje iskelet dosyası oluştur: https://start.spring.io
+----------------------------------------------------------------------------------------------------------------------*/
 
-@Component
-	springte nesne yaratılırken nesnesinin yaratılmasını istediğimiz sınıfa ekliyoruz ve o sınıf scopea göre yaratılıyor
-componente isim verilebilir ismi vermezsek component ismi sınıf ismi olur, çağrılma yani nesne yaratılma sınıf ismine göre sırayla yapılır 
+/*----------------------------------------------------------------------------------------------------------------------
+												Spring anotationlar
+----------------------------------------------------------------------------------------------------------------------*/
 
-@Scope
-	singelton ve protetype kavramları
-	singelton ile işaretlersek initilize aşamasında yaratılır, protetype olark işaretlersek initilize de yaratmaz istediğimizde yaratır
-	singelton ve lazy işaretlenirse de başlangıçta yaratmıyor istediğimzde bize veriyor ve tekrar istendiğinde aynısını veriyor
+/*----------------------------------------------------------------------------------------------------------------------
+	@Component
+		springte nesne yaratılırken nesnesinin yaratılmasını istediğimiz sınıfa ekliyoruz ve o sınıf scopea göre 
+		yaratılıyor componente isim verilebilir ismi vermezsek component ismi sınıf ismi olur, çağrılma yani nesne 
+		yaratılma sınıf ismine göre sırayla yapılır. scope belirlenmezse singelton olur
 
-@PostContstruct
-metod atotastonu, motodun içinde bulunduğu sınıf nesnesi yaratıldığında o metodun çağrılmasını istiyorsak bu anotasyonu kullanıyoruz.
+	@Scope
+		singelton ve protetype kavramları
+		singelton ile işaretlersek initilize aşamasında yaratılır, protetype olark işaretlersek initilize de yaratmaz 
+		istediğimizde yaratır. singelton ve lazy işaretlenirse de başlangıçta yaratmıyor istediğimzde bize veriyor ve
+		tekrar istendiğinde aynısını veriyor.
+	@Scope("protetype")
+	@Scope("singelton")
+	@Laz
 
 
 
-merhaba abi, geçen konuşmuştuk ya, biraz araştırdım. Yazılımcı arkadaşlara da sordum fakat direkt devlet kurumlarının hangi dili kullandığını bulmak pek mümkün değil,
-genellikle taşeron şirketler üzerinden ilerliyorlarmış. Java bankacılıkta ve web uygulamaları yazan firmalarda tercih ediliyor. Ziraat Teknoloji, vakıf bank ve diğer özel bankalar olabilir. Simens, migros one gibi bir çok şirkette java yazıyor. fakat şuan staj ya da giriş seviyesine başvurabileceğimiz için büyük şirketlere kabul alamam. Aslında şu an deneyim için neresi olursa tadındayım. 
+	@PostContstruct
+		metod atotastonu, motodun içinde bulunduğu sınıf nesnesi yaratıldığında o metodun çağrılmasını istiyorsak bu 
+		anotasyonu kullanıyoruz.
+
+
+	#1 Kendi yazmadığımız sınıfların, yani kullandığımız kütüphanelerin sınıf nesnelerinin istediğim zaman yaratılmasını
+	sağlarız. Biz yazmadığımız için o sınıflar component olarak işaretlenmemiş olabilir. Bunun için bean denilen 
+	anotasyon kullanılır. bean dendiğinde nesnenin referansı akla gelir
+
+	@Configuration
+		konfigürason sınıflarını bu anotasyonlarla işaretliyoruz.
+
+	@Bean
+		Configuration olarak işartelediğimiz sınıfımızda kullandığımız sınıfı (#1 Kendi yazmadığımız sınıfların) çağıran
+		metoda @Bean anotsyonunu verirsek, o sınıflarında nesnelerini yaratabiliriz. Nesnenin yaratılmasını bizim
+		tanımladığımız bir anotasyon
+		
+		Bean'in default ismi metod ismi ile aynıdır. cammel case yani küçük harf kullanır bu durumda projede aynı isimli 
+		iki bean olabilir ama nesne yaratılması gerekirse sıkıntı çıkar. hangisinin nesnesinin yaratılacağını bilemez.
+
+		Bu yüzden Component ve Bean lere isim vermeliyiz. 
+
+		Protetype
+			her istendiğinde yaratıyor. 
+		@Singelton
+			bir kere yaratılıyor.
+		@Lazy
+			ise istendiğinde yaratılmasını sağlar
+
+	lazy ile singelton yaratılması anlamlı bu sayede hem istediğimizde yaratmış hemde 1 kere yaratmış yani ikinciye
+	istendiğinde yine aynı nesnenin verilmesi sağlanmış olur.
+
+
+	@Autowired
+		nesnenin hangi constructor ile yaratılacağını belirlememize yarar nesne hangi ctor ile yaratılacaksa o ctoru 
+		bu anotasyonla işaretliyoruz. tek ctor varsa işaretlemeye gerek yok
+
+	burada ctorun parametreleri ctor injection oluyor 
+
+	@Qualifier 
+		enjekte edeceğimiz beani burada veriyoruz
+		örnek: public DateTimeDisplay(LocalDateTime now, @Qualifier ("dateTimeFormatter") DateTimeFormatter formatter)
+----------------------------------------------------------------------------------------------------------------------*/
+
+	@Component
+	public class DateTimeDisplay {
+	    private final LocalDateTime m_now;
+	    private final DateTimeFormatter m_formatter;
+
+	    public DateTimeDisplay(LocalDateTime now,DateTimeFormatter formatter) //ctor injection
+	    {
+	        m_now = now;
+	        m_formatter = formatter;
+	    }
+
+	    @PostConstruct
+	    public void display()
+	    {
+	        Console.writeLine("Now:%s", m_formatter.format(m_now));
+	    }
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Qualifier (niteliklendirme), enjekte edeceğimiz beani burada Qualifier ile veriyoruz.
+----------------------------------------------------------------------------------------------------------------------*/
+
+	@Component
+	public class DateTimeDisplay {
+	    private final LocalDateTime m_now;
+	    private final DateTimeFormatter m_formatter;
+
+	    public DateTimeDisplay(LocalDateTime now, @Qualifier ("dateTimeFormatter") DateTimeFormatter formatter) //ctor injection
+	    {
+	        m_now = now;
+	        m_formatter = formatter;
+	    }
+
+	    @PostConstruct
+	    public void display()
+	    {
+	        Console.writeLine("Now:%s", m_formatter.format(m_now));
+	    }
+	}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+	property injection, enjekte edeceğimiz beani burada Qualifier ile veriyoruz.
+----------------------------------------------------------------------------------------------------------------------*/
+
+	@Component
+	public class DateDisplay {
+	    private LocalDate m_today;
+	    private DateTimeFormatter m_formatter;
+
+	    @Autowired
+	    public void setToday(LocalDate today) //property injection
+	    {
+	        m_today = today;
+	    }
+
+	    @Autowired
+	    public void setFormatter(@Qualifier("dateFormatter") DateTimeFormatter formatter) //property injection
+	    {
+	        m_formatter = formatter;
+	    }
+
+	    @PostConstruct
+	    public void display()
+	    {
+	        Console.writeLine("Today:%s", m_formatter.format(m_today));
+	    }
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	field injection
+----------------------------------------------------------------------------------------------------------------------*/
+	@Component
+	public class TimeDisplay {
+	    @Autowired
+	    private LocalTime m_now; //field injection
+
+	    @Autowired
+	    @Qualifier("TimeFormatter")
+	    private DateTimeFormatter m_formatter; //field injection
+
+	    @PostConstruct
+	    public void display()
+	    {
+	        Console.writeLine("Now:%s", m_formatter.format(m_now));
+	    }
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+	SOLİD prensipleri
+
+	Single Responsibility	-> Her sınıfın kendi görevinin olması
+	Open Closed				-> öyle bir kod yaz ki o kadu genişletmek için kodla oynamak zornda kalma ( örnek inhertance)
+	Liskov Substitution		-> Türden bağımsız kod yaz (polymorphism)
+	Interface Segragation	-> Gereksiz yere türleri soyutlama (oyunda kapılar var bazıları zamalı bazıları normal) 
+								kapı ve zamanı ayrı soyutla gereklide kullan (interface)
+	Dependency Inversion	-> Bağımlılığı ters çevirme ilkesi
+				ileri tarihte işim varsa önce gideceğimize karar veriyoruz sonra günü geldiğinde detayları halledeceğiz
+				yani önce genel sınıf soonra kullanırken implimentasyon detaylarını yazıyoruz. bir ay sonra gideceğimiz 
+				davetin hava durumunu trafiğini şimdi düşünmenin mantığı yok
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
