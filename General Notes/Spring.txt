@@ -1,0 +1,18 @@
+Spring anotationlar
+
+@Component
+	springte nesne yaratılırken nesnesinin yaratılmasını istediğimiz sınıfa ekliyoruz ve o sınıf scopea göre yaratılıyor
+componente isim verilebilir ismi vermezsek component ismi sınıf ismi olur, çağrılma yani nesne yaratılma sınıf ismine göre sırayla yapılır 
+
+@Scope
+	singelton ve protetype kavramları
+	singelton ile işaretlersek initilize aşamasında yaratılır, protetype olark işaretlersek initilize de yaratmaz istediğimizde yaratır
+	singelton ve lazy işaretlenirse de başlangıçta yaratmıyor istediğimzde bize veriyor ve tekrar istendiğinde aynısını veriyor
+
+@PostContstruct
+metod atotastonu, motodun içinde bulunduğu sınıf nesnesi yaratıldığında o metodun çağrılmasını istiyorsak bu anotasyonu kullanıyoruz.
+
+
+
+merhaba abi, geçen konuşmuştuk ya, biraz araştırdım. Yazılımcı arkadaşlara da sordum fakat direkt devlet kurumlarının hangi dili kullandığını bulmak pek mümkün değil,
+genellikle taşeron şirketler üzerinden ilerliyorlarmış. Java bankacılıkta ve web uygulamaları yazan firmalarda tercih ediliyor. Ziraat Teknoloji, vakıf bank ve diğer özel bankalar olabilir. Simens, migros one gibi bir çok şirkette java yazıyor. fakat şuan staj ya da giriş seviyesine başvurabileceğimiz için büyük şirketlere kabul alamam. Aslında şu an deneyim için neresi olursa tadındayım. 
