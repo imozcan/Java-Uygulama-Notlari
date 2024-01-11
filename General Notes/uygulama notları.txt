@@ -1,0 +1,1224 @@
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    Java Uygulama notları
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Paket tipi belirtmeyen sınıflara friendly class denir.
+    Friendly class aynı paket içerisinden erişilebilen sınıflardır.  
+
+    Var yerel değişkenlerde kullanılır.
+    Var değişkenler ilk değer verilmesi (initialization) zorunludur. 
+
+    Kısıtlı sayıdaki değerleri daha okunabilir hale getirmek için enum class yarattık, Yazı kılığına girmiş sayılar gibi 
+    düşünebiliriz.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    06-30-03-2023
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    IEEE 754 te yuvarlama hataları vardır burada hatadan kasıt hız için tercih edilmiştir. Aslında, bu bir hata değil 
+    çalışma sistemidir.
+
+    *Double
+    Sayının karşılığı double kümesinde yuvarlama, işlemi yaparken yapılıyor.
+
+    A 0.1  b 0.2   c 0.3 
+    a + b == c      Eşit çıkmaz
+    Double da çıkmaz çünkü double da toplandıktan sonra yuvarlanıyor (a + b ) yuvarlanıyor  c 0.3 olduğu için eşit çıkmaz 
+
+    *Float
+    A 0.1  b 0.2   c 0.3 
+    a + b == c    Eşit çıkar 
+    Sayının karşılığı float kümesinde yok. Bu yüzden zaten yuvarlanmış halini alıyor(a , b ve c) bu yüzden eşit çıkıyor 
+    Float yaparsak çıkar çünkü float ta  
+    a, 0.1 ile temsil edilemediği için yuvarlıyor.   
+    b 0.2 ile temsil edilemediği için yuvarlıyor. (a + b ) yuvarlanmış sayılar toplanıyor c yi de float tuttuğumuz için 
+    o da yuvarlanmış  c 0.3 olduğu için eşit çıkar 
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                            Mantıksal Eşitlik Yaklaşımları
+
+    Eşitlikte double değerlerin eşitlik karşılaştırmasının bir yaklaşımı delta belirler aradaki fark delta dan küçükse 
+    eşittir diyebiliriz 
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+    var a = Console.readDouble("Birinci sayıyı giriniz:");
+    var b = Console.readDouble("İkinci sayıyı giriniz:");
+    var c = Console.readDouble("Üçüncü sayıyı giriniz:");
+    var d = a + b;
+    var delta = 0.00000001;
+
+    Console.writeLine("a = %.20f, b = %.20f, c = %.20f, d = %.20f", a, b, c, d);
+    Console.writeLine(Math.abs(c - d) < delta ? "Eşit" : "Eşit değil");
+
+
+/*---------------------------------------------------------------------------------------------------------------------- 
+    Sayıları stringe çevirerek yazılarda noktadan sonra belli bir noktaya kadar(8 basamağa kadar) alıp stringe çevirip 
+    stringleri de karşılaştırabiliriz cStr.equals(dStr) gibi bir string karşılaştırması yapabiliriz.Görece yavaştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                         BIGDECIMAL(Gerçek sayılar)
+    Yuvarlanmaması için BIGDECIMAL sınıfı kullanılır bu sınıf yüzlerce makine komutu ile yaptığı için iş yükü getirir. 
+    Gereksiz yere Kullanılmamalıdır. Bu yüzden Senaryoya göre hangisinin kullanılacağına karar vermelidir. Parasal 
+    finansal uygulamalarda kullanılabilir.
+
+    Yuvarlamanın nasıl yapılabileceği belirlenebildiği ya da yuvarlama yapılmaması tercih edilebilir. Çok büyük ya da
+    çok küçük(double den büyük/Küçük) Sayılar ile çalışabilmektedir.
+
+    Immutable bir sınıftır. Daha optimize çalışır fakat Sayılar değiştirilemediği için, her yeni sayı için yeni nesne 
+    yaratılmalı. Sayıları bize verse de işlem yapamayız çünkü immutable class, Bu yüzden sınıfın matematiksel işlem yapan 
+    metodları vardır. 
+    (Negatifi, abs si,Toplama ,çıkarma, çarpma, bölme, karekök, üstel…. )
+
+    Yuvarlamanın nasıl yapılacağını belirleyen constarctor. Hiç yuvarlama yapmama da bu metod ile yapılır.
+
+                        *****BIGDECIMAL de Sayıyı almak için nesne yaratılması gerekir.*********  
+
+    Ek bilgi: Gerçek sayıları cpu yapamaz ve yardımcıya verir o işlemi yapar. İntel de bu 8080 çipidir.Yazılarla işlem 
+    yapılır. Bu yüzden yüzlerce makine komutu ile işlem yapar ve yavaştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+    class Application {
+        public static void run(String[] args)
+        {
+            var a = new BigDecimal(Console.read("Birinci sayıyı giriniz:"));
+            var b = new BigDecimal(Console.read("İkinci sayıyı giriniz:"));
+            var c = new BigDecimal(Console.read("Üçüncü sayıyı giriniz:"));
+            var d = a.add(b);				// çağıran ile çağrılanı toplar.
+
+            Console.writeLine("a = %.20f", a.doubleValue());
+            Console.writeLine("b = %.20f", b.doubleValue());
+            Console.writeLine("c = %.20f", c.doubleValue());
+            Console.writeLine("d = %.20f", d.doubleValue());
+            Console.writeLine(c.equals(d) ? "Eşit" : "Eşit değil");
+        }
+    }
+
+
+    //Yazdığımız konsol sınıfı da bigdecimal işlemi yapmaktadır bu sınıfta içeride bigdecimalı çağırıyor
+     var a = Console.readBigDecimal("Birinci sayıyı giriniz:");
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    MatContext sınıfı, 12 noktadan sonraki basamak sayısı -RoundingMode yuvarlama tipini kullanan bir sınıftır
+----------------------------------------------------------------------------------------------------------------------*/
+
+    class Application {
+        public static void run(String[] args)
+        {
+            var a = Console.readBigDecimal("Bir sayı giriniz:");
+            var result = a.sqrt(new MathContext(12, RoundingMode.HALF_UP));		
+
+            Console.writeLine("sqrt(%s) = %s", a, result);
+        }
+    }
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    bigDecimal de farklı devide metodları vardır.
+
+    var c = a.divide(b);
+
+    Bu overload da 
+    Bölme yaparken 10 / 2 yaparken  problem çıkmaz  ama
+    Bölme yaparken 10 / 3 yaparken  devirli sayı olduğundan yuvarlama yapmadan yapmaya çalışacağı için exception fırlatır.
+
+    Devirli sayı yoksa bu overload kullanılabilir.
+
+    var c = a.divide(b, 10, RoundingMode.HALF_UP);     
+
+    Noktadan sonra 10 (Scale değeri)basamak ve yuvarlama modunu belirlediğimiz overload’u
+    Bölme yaparken 10 / 3 yaparken  devirli halini noktadan sonra 10 basamağı verir.  C = 3.333333333
+
+     <=>   AncakVeAncak
+
+    BigDecimal sınıfının compareTo metodu:
+        r = a.compareTo(b);
+        çağrısı için
+        1. r == -1 <=>      a < b
+        2. r == 0 <=>       a == b
+        3. r == 1 <=>       a > b
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    BIGDECİMAL da ONE, TEN ve ZERO de çok kullanılan değerler bulunur, bunlar nesne yaratmadan direk kullanılabilir. 
+    (Statik veri elemanlarıdırlar (BIGDECİMAL türünden referanstır)) 
+----------------------------------------------------------------------------------------------------------------------*/
+
+     public static void run(String[] args)
+        {
+            for (;;) {
+                var a = Console.readBigDecimal("Birinci sayıyı giriniz:");
+                var b = Console.readBigDecimal("İkinci sayıyı giriniz:");
+
+                Console.writeLine(a.compareTo(b));
+
+                if (a.equals(BigDecimal.ZERO) && b.equals(BigDecimal.ZERO))
+                    break;
+            }
+
+            Console.writeLine("Tekrar yapıyor musunuz?");
+        }
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    07-11-04-2023
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    BIGINTEGER'ın da bigdecimal gibi matematiksel sınıfları vardır
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+    var a = new BigInteger("9999999999999999999999999999999999999999999999999999999999");
+
+
+    for (var i = BigInteger.ZERO; i.compareTo(BigInteger.TEN) < 0; i = i.add(BigInteger.ONE))
+            Console.write("%d ", i);
+
+
+    var b = Console.readBigInteger("İkinci sayıyı giriniz:");
+        var c = a.add(b);
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Random biginteger üretimi, Verilen bit değerine göre Pozitif rastgele  sayı üretirer
+----------------------------------------------------------------------------------------------------------------------*/
+
+    var n = new BigInteger(128, random);	//üretilecek sayının biti 128 bit sayısı
+
+        if (random.nextBoolean())
+            n = n.negate();
+
+    Console.writeLine(n);      
+    Console.writeLine(n.toString(16)); 
+
+    var val = BigInteger.valueOf(n); 
+
+/*----------------------------------------------------------------------------------------------------------------------
+     n = n.negate(); ile üretilen sayının ters işaretlisini verir
+
+    Bunu rastgele boolean a bağladık ve bu sayede bazı sayıları ürettikten sonra bazılarını negatife çevirdik 
+    (Üretilen sayıların bazılarını rastgele Negate ettik (üretilen rastgele sayıların ters işaretini ))
+
+       Console.writeLine(n);                    direk 10 luk sistemde ekrana bastık 
+     Console.writeLine(n.toString(16));     İle üretilen sayının 16lık halinin stringini aldık
+
+
+    var val = BigInteger.valueOf(n);
+    Elimizdeki int n sayısını bıgenteger a çevirip val e atadık bıgınteger ile işlem yapabilmek için
+
+    Factorial ve isprime metodlarını bigınteger ile yazdık (Ders notlarında var)
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Stopwatch. Kod parçasının(metodlarımızın) çalışma süresini tespit eden kavramdır.
+
+    System sınıfının currentMillis metodu 01.01.1970 geceyarısı UTC (Universal Time Clock) zamanından itibaren çağrıldığı
+    noktaya kadar geçen milisaniye sayısına geri döner. Bu durumda bir kod parçasının ne kadar zaman aldığı aşağıdaki
+    gibi ölçülebilir. Örnek durumu göstermek için yazılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+
+    Console.writeLine("isPrime(BigInteger)");
+
+    var start = System.currentTimeMillis();
+    boolean result = NumberUtil.isPrime(BigInteger.valueOf(val));
+    var stop = System.currentTimeMillis();
+    var elapsed = stop - start;
+
+    Console.writeLine(result ? "Asal" : "Asal değil");
+    Console.writeLine("Elapsed in seconds:%.20f", elapsed / 1000.);
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    System sınıfının nanoTime metodu nano saniye hasaasiyetinde (küçük bazı detaylar var) nanosaniye sayısına geri döner.
+    Bu metot currentMillis metodundan daha iyidir
+----------------------------------------------------------------------------------------------------------------------*/
+
+ 
+
+    Console.writeLine("isPrime(BigInteger)");
+    
+    var start = System.nanoTime();
+    boolean result = NumberUtil.isPrime(BigInteger.valueOf(val));
+    var stop = System.nanoTime();
+    var elapsed = stop - start;
+
+    Console.writeLine(result ? "Asal" : "Asal değil");
+    Console.writeLine("Elapsed in seconds:%.20f", elapsed / 1_000_000_000.);
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+    Console.writeLine("Elapsed in seconds:%.20f", TimeUnit.MILLISECONDS.convert(elapsed, TimeUnit.NANOSECONDS) / 1000.);
+                                                            buna        convert bunu        eleapsın türüde bu   
+
+    Sonucunda da Milisaniyeyi 1000. e  böldük sn cinsinden bulduk
+    Burada timeunit enum classının convert metodunu kullanarak yaptık
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    08-13-04-2023
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                Guava (google ın kütüphanesi)
+
+    Guava Stopwatch sınıfı
+    Guava yı dependency bize dahil edip takılıyoruz.(pom dosyamıza)
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    stopwatch un elapsi(aradaki farkı) sınıfın elemanı olan elaps a direk atanıyor, burada da direk TimeUnitten milisecond
+    değerini alıyoruz
+
+    Her start stop arası farklı nesneler üzerinden işlem yapar. Ve değerleri o nesnede tutar. Reset e gerek yoktur
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+    Console.writeLine("isPrime(BigInteger)");
+        var stopWatch = Stopwatch.createStarted();		// dediğimizde nesnemiz yaratılıyor ve başlıyor.
+        boolean result = NumberUtil.isPrime(BigInteger.valueOf(val));
+        stopWatch.stop();
+        Console.writeLine(result ? "Asal" : "Asal değil");
+        Console.writeLine("Elapsed in seconds:%.20f", stopWatch.elapsed(TimeUnit.MILLISECONDS) / 1000.);
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Apache commons kütüphanesinin StopWatch sınıfı
+
+    Burada guavadan farklı olarak aynı nesne kullanıldığı için tekrar stopwatch ı tekrar kullanacaksak reset işlemi 
+    yapmamız gerekiyor
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+        var stopWatch = new StopWatch();
+            Console.writeLine("isPrime(BigInteger)");
+
+            stopWatch.start();
+            boolean result = NumberUtil.isPrime(BigInteger.valueOf(val));
+            stopWatch.stop();
+            Console.writeLine(result ? "Asal" : "Asal değil");
+            Console.writeLine("Elapsed in seconds:%.20f", stopWatch.getTime(TimeUnit.MILLISECONDS) / 1000.);
+
+	     stopWatch.reset();
+
+
+	    Console.writeLine("isPrime(long)");
+            stopWatch.start();
+            result = NumberUtil.isPrime(val);
+            stopWatch.stop();
+            Console.writeLine(result ? "Asal" : "Asal değil");
+            Console.writeLine("Elapsed in seconds:%.20f", stopWatch.getTime(TimeUnit.MILLISECONDS) / 1000.);
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    timeUtil sınıfından nanotime ı kullanarak kendi stopwatch sınıfımızı yazabiliriz.
+
+    Private olarak start ve stop Zamanları tutmalıyız. Bunları start ve stop metodlarında System.nanoTime() il zamanları 
+    alacağız. Elapsed metodlarını alacağız  (mili-nano ve second) metodlarını yazacağız ve public olarak total zamanı tutmalıyız
+
+
+    Elpsed: m_stop - m_start ile hesaplıyoruz 
+
+    Elpsed ı parametresiyle aldığı türü TimeUnit.NANOSECONDS a convert ediyor 
+    timeUnit.convert(m_stop - m_start, TimeUnit.NANOSECONDS)  ile convert ediyoruz
+
+    Bu satır: burada m_stop - m_start, değişkenlerinin türü TimeUnit.NANOSECONDS sen al bunları timeUnit in istediği sınıfa çevir
+
+    HEDEF BİRİRiM   :  TimeUnit.NANOSECONDS
+    DÖNÜŞECEĞİ BİRİM:  timeUnit.convert.  
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Private veri elemanlarını isimlendirirken m_ ile başlayan convention ı kullanıyoruz
+    Statik olan private veri elemanlarınıysa ms_ ile başlayan convention ile isimlendireceğiz 
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Test işlemleri
+
+    Programcının kendi yazdığı kodları kendi test etmesine unit testing dedir. 
+
+    Test işlemi en aşağı düzeyde programcının yazdığı kodları test etmesiyle başlar. Buna "birim testi (unit testing)" denir. 
+    Programcı genel olarak, yazmış olduğu bir metodun doğru çalışıp çalışmadığını test eder (duruma göre "etmelidir"). İşte 
+    burada bir metot bir "birim (unit)" olarak düşünülür ve bu parçalar bir araya getirilerek yazılım oluşturulur.
+
+    Yani metotlar çağrılarak yazılım geliştirilir. Bu bir araya getirme işlemidir, sonucunda genellikle parçalar yeniden 
+    test edilir. Buna da "entegrasyon testi (integration testing)" denilmektedir.Yazılımın önemli bölümlerine modüle denir.
+    Bu modül testleri de ayrı yapılır. Ürün bir bütün haline getirilip test edilir. Bunlar kabul testleridir ve buna 
+    alfa testing denir. Sonrasında belli kullanıcılara ürün verilir ve orada deneyimler ve hataların raporlanması beklenir. 
+    Bu da Beta testidir.
+
+    -Birim testlerinde bazı terimler vardır input, expected, actual…
+
+    Örnek olarak;
+    verilen 'input' değerlerine karşılık çıkış değeri 'expected' olur ve 'expected' ile 'actual' eşitse birim testi geçilmiştir.
+
+
+    Birim testinin kodlarının ürün derlenirken ürünün kodlarına girmemesi için test scope'ları kullanılır. Maven da dependeny
+    bölümünde verilen lib'lerde scope eklenir. Bu scope test scope olarak eklenirse derlenirken bu lib'ler ürünün jarına girmez.
+
+
+    Test yaparken 3 tip yaklaşım mevcut: 
+
+    *  Hiç birim testi yapmamak 
+    *  Katı katıya birim testi yapmak 
+    *  Gereken birimler için birim testi yapmak
+
+    Burada anahtar nokta her şeyin kararında yapılması ve seneryo, bütçe, iş yükü gibi faktörler rol oynar. yani gereken
+    birimler için birim testi yapılması ideal durumdur ama hiç bir zaman ideal durumlarla karşılaşmayız :) 
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    09-18-04-2023
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+   TERMİNOLOJİ
+
+    “Verification” Kodunuz doğru çalışıyor mu ?   
+    “Validation” sizden isteneni yaptınız mı ?
+    
+    Çarpma yaptınız kodunuz doğru (kodun doğru çalışması) çalışıyor. “Verification” dan geçtik ama bizden istenen aslında 
+    toplamaydı. Bu yüzden validation dan kaldık.
+
+    Bu durum senaryonun yanlış anlaşılmasından kaynaklanır
+
+    Wp de max 200 kişinin bulunabildiği bir grupun kodunu yazmanız istendi. Siz gruba katılacak kişi sınırı belirlemediniz.
+    Kodunuz çalışıyor ama 200+ kişi de gruba eklenebiliryor o zaman “Verification” dan geçtik ama “Validation” dan kaldık
+    çünkü bizden bir limit koymamız istendi.
+
+
+    Birim testi araçları vardır. Bunlar birim testleri yapılırken kullanılır. İşin hamaliyesini yazılımcının sırtından 
+    alır. Hatta bazı firmalar kendi birim testi araçlarını da yazarlar
+
+    Java'da temel birim testi aracı "JUnit" olsa da Spring gibi popüler framework'lere ait olan ya da olmayan bir çok farklı
+    araç da söz konusudur.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    TERMİNOLOJİ
+
+    assert          :(iddia ediyorum ki) demek.     
+    Test            :      iddia ediyorum ki metottan bu değerler gelecek.
+    Negatif testi   :      iddia ediyorum ki bu değerler gelmeyecek.
+    Zaman testi     :      iddia ediyorum ki bu saniyede bitecek.
+    Exception testi :      iddia ediyorum ki bu değerlerde exception fırlatacak.
+
+    Gibi gibi… testler bulunur.
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Test metodlarının ve sınıflarının isimleri açıklayıcıdır.
+
+    NumberUtil_isPrimeTest {
+        @Test
+        public void givenLongValue_whenPrime_thenReturnTrue()
+
+
+    Bir kodun test kodu olması için anotetionın olması gerekir @Test
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Assert sınıfının asertEquals metodu 2 parametrelidir, ilk parametre beklenen değeri ikinci parametre Actual ı alır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+    public class NumberUtil_isPrimeTest {
+        @Test
+        public void givenLongValue_whenPrime_thenReturnTrue()
+        {
+            var input = 710584055392819667L;
+    	    var expected = true;
+
+            Assert.assertEquals(expected, NumberUtil.isPrime(input));
+        }
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Bu metodda da assert sınıfının assertTrue metodunda expectedı direk true alır ve değer true dönmezse testten geçemez
+    Bu iki parametreli ctorunda ilk parametre exception alınması durumunda  basılacak hata mesajını da ister.
+----------------------------------------------------------------------------------------------------------------------*/
+    
+    public class NumberUtil_isPrimeTest {
+        @Test
+        public void givenLongValue_whenPrime_thenReturnTrue()
+        {
+            var input = 710584055392819667L;
+            var expected = true;
+
+            Assert.assertTrue(String.format("%d must be prime", input), NumberUtil.isPrime(input));
+        }
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    10-25-04-2023
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Programlamada doğru ya da yanlış yani boolean değere geri dönen metodlara “predicate mothods” denir. Genellikle test
+    metodlarında bu terim karşımıza çıkar
+
+    Dependency bölümünde test kodunun scope bunu teste çekersek build aşamasında junit in jarı test kodları ürüne girmez
+
+    
+        assert <boolean türden ifade> [: void olmayan bir ifade]
+
+    Akış assert deyimine geldiğinde boolean türden ifadenin değeri hesaplanır, true ise akış devam eder, false ise 
+    AssertionError nesnesi fırlatılır. assert deyiminde varsa void olmayan ifade yazıya dönüştürülerek mesaj olarak 
+    verilir (stacktrace).
+
+        assert 2 == 3 : “eşit değil”
+
+    assert deyiminin kullanılabilmesi için "java" programına -ea veya -enableassertions seçeneği verilmelidir. Eğer bu
+    seçeneklerden biri verilmezse assert deyimi görmezden gelinir.
+    assert deyiminin devreye girmesi için java -ea  -jar yourJarFile.jar şeklinde çalıştırılmalıdır.
+
+    assert deyimleri derleme sırasında yazıldığından bu seçenek verilmezse byte code'a eklenmiş olur. Öyleyse programcının 
+    ürün aşamasında assert deyimlerini devreden çıkartacak yani byte code'a eklenmeyecek şekilde yazması gerekir. 
+    Bu konu ileride ele alınacaktır
+
+    Private metodlar assert deyimleri ile test edilir. Assert(idda ediyorum ki )
+        Assert capacity >  m_elens.length : String.format(“”new capacity must be greater than current capacity);
+
+
+    Private metodun testi private metodu çağıran metodu çağırarak yapılabilir. Private metodun testini yaparken, private
+    metodun içerisine assert deyimi ile testi yazarak, private metodu çağıran metodu çağırarak metodu tetikleriz.
+    
+    Yani private metodu dışarıdan çağıramıyoruz ama o metodu çağıran public metodlar var. assert deyimini private metodun 
+    İçine yazıp, private metodu çağıran public metodu dışarıdan çağırarak private metodun çalışmasını sağlayarak test 
+    edebiliriz.
+
+
+    Aşağıdaki örnekte changeCapacity metodu private olduğundan normal şartlarda public bir metot gibi argüman kontrolü
+    yapılması iyi bir teknik değildir. Çünkü zaten private metot programcı tarafından uygun argümanlarla çağrılır. Fakat
+    bu durumda programcı sınıfı yazarken hatalı bir çağırma yapmış olabilir.Bu durumda changeCapacity metodunun argüman
+    değerlerinin kontrol edilmesi gerekir. Hatta aşağıdaki gibi sınıf için bu kesinlikle yapılmalıdır.İşte bu gibi testler
+    basit olarak assert deyimi ile yapılabilir. Programcı ilgili assert deyimini yazar -ea seçeneği ile ilgili test
+    kodlarını çelıştırır. Örnekteki test kodları CollectionLib kütüphanesinde test scope'u için yazılmıştır. Aslında 
+    yazılan bu kod birim testi kodu olarak yazılsa da dolaylı bir birim testidir. Şüphesiz test kodunun da doğru 
+    yazılması gerekir.
+    
+    Peki bu assert deyiminin kütüphane oluşturulduğunda byte code'a eklenmemesi nasıl sağlanacaktır? 
+
+    Derleyiciler akışın hiç bir zaman gelemeyeceği bir kod için ya error oluşturur ya da o kodu byte code'a eklemezler. 
+    Şüphesiz derleyicinin akışın kesinlikle o koda gelmeyeceğini anlaması gerekir. Bu durumda programcı assert kodlarının
+    ürün aşamasında byte code'a eklenmesini engellemek için derleyicinin final veri elemanları için yaptığı optimizasyonu
+    kullanabilir.
+
+    Örnekteki CSDArrayList sınıfında DEBUG isimli boolean bir veri elemanı final olarak bildirilmiştir. Bu durumda bu
+    veri elemanı false yapıldığında
+
+        if (DEBUG) {
+           assert deyimi ve diğer kodlar
+        }
+
+    biçiminde yazılan if deyiminin hiçbir zaman doğru kısmına akış gelemeyeceğinden veri elemanı da hiçbir şekilde
+    değiştirilemeyeceğinden artık derleyici bu kodu byte code'a eklemeyecektir. Bu durumda tüm assert deyimleri bu şekilde
+    yazılabilir.
+
+    EK BİLGİ: Metoda control + left click (kullanıldığı yerleri gösterir inteliige)
+    EK BİLGİ: Koşul operatörende işlem gerçekleşir ve değer üretir. Deyimler bir değer üretmez  
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    12-04-05-2023
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    StringBuilder içerde dizi tutuyor parantez içerisinde capasity değerini tutuyor
+        var sb = new StringBuilder(s.legth());      ————> s’in uzunluğu kadar dizi tutuyor içeride
+
+    Diziyi büyütmek demek yeni bir dizi yaratıp eski dizinin elemanlarının o yeni diziye kopyalayıp eski diziyi koparıp 
+    yeni diziyi vermesidir.
+
+
+    ----------------------------------------------
+    StringBuilder sınıfının getChars() metodu
+        sb.getChars() StringBuilder’ın  başlangıç adresinden sizin verdiğiniz bölümünü alıp yine sizin verdiğiniz diziye 
+        kopyalıyor
+    Örnek
+        sb.getChars(3, 8, chars, 0);
+        StringBuilder’ın 3. İndexinden 8.indexine kadar al(8 dahil değil) ve onu chars dizisine 0. İndexlen başlayarak 
+        kopyaladı
+    ----------------------------------------------
+
+    ----------------------------------------------
+    StringBuilder sınıfının setLength() metodu
+        StringBuilder’ın uzunluğunu arttırıyor ve artan yerlere null atıyor. İstenilirse yazının uzunluğu da azaltılabilir
+        azaltılırsa bazı karakterler kaybedilir.
+    Örnek
+        sb.setLength(sb.length + 5);  
+        sb.lengthi bu satıra gelene kadar neyse ona 5 ekledik eklenen kısımlara null atandı.    
+        null karakter charda : ’\0’ macte  ters bölü “ option + * ”   
+    ----------------------------------------------
+
+    StringBuilder stringin mutable olması geren(yani tezavantajı olduğu) yerlerde kullanılmalıdır. Aynısı değildir, yani 
+    StringBuilder stringin yardımcısıdır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    LINUX
+    Linux te standart yönlendirme           :  ls Download > downList.txt
+    Linux te standart error yönlendirme     :  ls Download3223 2> downList.txt       (2> bu şekilde yapılır)
+
+
+    İnput verisi yönlendirmek için < kullanılır
+
+    Java da standart input a jar dosyası çalıştırılırken runtime da dosyalardan toplu veri gönderilebilir.  
+    java -jar Sample.jar < input.txt  şeklinde inputları yönlendirebiliriz.
+
+    Program çıktılarını farklı bir programa yönlendireceksek | (pipe) ile yönlendirilir
+
+    ls -l  |  java -jar Sample.jar  > output.txt  şeklinde inputları yönlendirebiliriz.
+    ls -l   in çıktısını aldı var a yönlendirdi, var ın outputunu da output.txt ye yönlendirdi.
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    13-09-05-2023 
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+   Programın komut satırı argümanları çalıştırılırken geçilir ve komut satırı argümanlarını dolaşmak için main'e geçilen 
+   args Dizisi dolaşılarak ekrana bastırılabilir
+
+   Komut satırı argümanları sınırlandırılabilir.
+ 
+----------------------------------------------------------------------------------------------------------------------*/
+
+	İf (args.length != 2){
+		Console.Error.wiriteLine(“Wrong number of argüments”);
+		System.exit(1);
+	}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Elipsis parametresi ile değişken sayıda argüman metoda verilebilir. Varargs parametresi metodun son parametresi 
+    olmalıdır.
+
+
+    Değişken sayıda argüman alan metotlar (vararg methods) "... (elipsis)" parametre ile yazılır. Elipsis parametresi 
+    metot açısından bir dizi referansıdır.  
+
+    Varargs metod ve dizi referansı olan iki metod, metod overload resolution gereği ambiguty error oluşturur. Çünkü aynı
+    imzalıdırlar
+
+    Varargs parametreli metodlarda metod overload resolution gereği temel türler varargstan önce gelir, temel tür daha 
+    kaliteli dönüşümdür  
+----------------------------------------------------------------------------------------------------------------------*/
+    class Application {
+        public static void run(String [] args)
+        {
+            int [] a = {1, 2, 3, 4, 5, 6};
+
+            Console.writeLine(Util.sum(a));
+            Console.writeLine(Util.sum(10, 20, 30));
+            Console.writeLine(Util.sum());
+            Console.writeLine(Util.sum(10, 20));
+        }
+    }
+
+    class Util {
+        public static int sum(int...values)		//*** - int...values - elipsis parametresi varargs metod 
+        {
+            var total = 0;
+
+            for (var val : values)
+                total += val;
+
+            return total;
+        }
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    14-11-05-2023 
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                      Recursion
+
+    
+    Bir dizin ağacını dolaşmak istediğimizde girişin bir dizin belirttiği durumda yapılacak iş yine aynıdır. Bu da öz 
+    yinelemeli bir iştir. Benzer şekilde merdiven çıkmakta recursion dır. Bu algoritmalara recursive algorithims denir. 
+
+    Eğer algoritma çözülürken ilerleme aşamasına gelindiğinde bu geldiğimiz noktada başladığımız nokta ile benzer bir 
+    durum ile karşılaşılıyorsa muhtemelen recursive bir algoritmadır.
+
+        Dizin ağacının dolaşılması
+        Tree ve graph veri yapılarının dolaşılması ve search işlemleri
+        Parsing algoritması
+        Özel bazı problemler (satrançta 8 vezir problemi vb…)
+        Matematiksel bazı algoritmalar
+        Bazı sıralama (sort) algoritmaları (quick sort, merge sort, heap sort)
+        …
+
+    
+    Ek bilgi : Parametre ve yerel değişkenler Stack te yaratılır. İşlemciye ve işletim sistemine göre metodların bazı
+    değerleri de Stack’te tutulabilir. Doldur boşalt ile çalışan Stackte bazı durumlarda taşma yaşanabilir. Bu yüzdendir ki
+    java da diziler sınıfsal olarak temsil edilir ve heapte tutulur. Bu sayede programcının 
+    hatasından(çok büyük değerli dizi….) kaynaklı Stack over flow olmaz.
+
+
+    Bir metodun kendisini çağırması ile başka bir metodu çağırması arasında hiç bir fark yoktur. recursive metodlar da bu 
+    şekilde çalışır. Yani kendi kendini çağıran metodlardan oluşur
+
+
+    recursive metodların bir noktada sonra kendisini çağırmayı bırakması gerekir yoksa Stack over flow olur. kaldı ki zaten
+    loop a girmiştir. Sonsuz döngüye girer.
+
+    recursive algoritmalar bir dalgıcın dalışı gibidir. Belli dalgıç dalış sırasında vurgun yememek için belli aralıklarla 
+    kendini basınca alıştırmak için bir süre bekler ve her beklemenin ardından tekrar daha dibe gider. Hedef derinliğe 
+    ulaşan dalgıç yukarı çıkarken de yine aynı noktalarda bekleyerek yukarı çıkar. 
+    
+    Stack’a atmak “push” işlemidir 
+    Stack’ten silmek “pop” işlemidir
+
+
+    foo yu 3 le çağırmış olalım 
+
+    foo 3   (dalış)
+    foo 2   (dalış)
+    foo 1   (dalış)
+    foo 0   (dalış)
+    return  (dip)
+    foo 1   (çıkış)
+    foo 2   (çıkış)
+    foo 3   (çıkış)
+----------------------------------------------------------------------------------------------------------------------*/
+ 
+
+    Public static foo(int x) {
+    	
+    	if (x == 0)
+    		return;
+
+    	foo(x - 1)
+    }
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    15-16-05-2023 
+    Tekrar ve VirtualBox a linux kurulumu 
+
+    -Disk Bölümlendirme-
+    Swap Area 8-12  GB arası yeterli
+    Swap sonrası kalan disk boyutunda exfat disk oluştur Mount’u / a yani root dizininine bağlanacak sekilde belirle 
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    16-18-05-2023
+    Linux ve recursive algoritmalar 
+
+    Factorial   
+    writeReverse
+    Reverse
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    17-23-05-2023
+    Çeşitli recursive algoritmalar 
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    18-30-05-2023
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Api, yazılım sisteminde uygulama programcısının doğrudan çağırabileceği, erişebileceği, o sistem ile uygulama 
+    programıcısı arasında köprü görevi gören metot ve sınıflardır. Java 8 Date Time API dersek java 8 ile eklenen 
+    tarih-zaman sınıf ve metodlar topluluğudur.
+
+                                Library ve framework
+
+    framework için iki kriter vardır.
+        1) Karmaşıklığın programcıya basit ve yalın gösterilmesi detay ve hammaliyenin programcının üzerinden alınması.
+        2) Kod akışının ele geçirilmesi duruma göre programcıya belli zamanlarda verilmesi (inversiyon of Control)
+
+    Kütüphanelerde akışın ele geçirilmesi gibi bir amaç güdülmez kütüphanelerde programın akışı kütüphaneyi kullananın 
+    elindedir. Kütüphanede bir takım sınıf ve metodlar faydalı bir takım işler yapar. Şüphesiz pek çok framework aynı 
+    zamanda bir ya da birden fazla kütüphanelere (API’lere) sahip olabilir
+
+    BU TANIMLAR ESNEKTİR.
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java’nın Date sınıfı java 1.0 ile eklenmiş, çoğu metodu depracated olmuş zorunlu olmadıkça kullanılmamalıdır 
+    Tarih, zamana ilişkin Date sınıfı bulunmaktadır, bu sınıf sistemdeki tarih-zaman bilgilerinden oluşan nesneyi yaratır
+    getTime() metodu 01.01.1970 00:00:00.000 (epoch time) ile tutulan tarih zamanın arasındaki milisaniyeye geri döner. 
+    Long parametreli toruna verilen milisaniye değerini ilgili tarihe çevirerek nesne yaratır. Çoğu metodu deprecated,tır.
+
+    Var today = new Date();
+    Console.writeLine(today);
+
+    Var milliss = today.getTime();
+    Console.writeLine(milliss);
+
+
+    Callendar sınıfının getInstance static factory metodu ile çalışan sistemdeki tarih-zaman bilgisi elde edilir. Bu 
+    sınıfın da tasarımsal Problemleri var ve immutable bir sınıf değildir. Bu sınıfta get ve set metodları vardır.
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+    class Application {
+        public static void run(String [] args)
+        {
+    	 Var now = Calendar.getInstance();
+
+    	 Console.writeLine("%02d/%02d/%04d %02d:%02d:%02d.%03d",
+    		now.get(Calendar.DAY_OF_MONTH),
+    		now.get(Calendar.MONTH) + 1,		//gerçek ay bilgisi için + 1 eklemek gerekiyor çünkü 0 dan başlıyor
+    		now.get(Calendar.YEAR),
+    		now.get(Calendar.HOUR_OF_DAY),
+    		now.get(Calendar.MINUTE),
+    		now.get(Calendar.SECOND),
+    		now.get(Calendar.MILLISECOND));	
+       }
+    }
+
+/*----------------------------------------------------------------------------------------------------------------------
+    GregorianCallendar ile çalışan sistemdeki tarih-zaman bilgisi elde edilir. 
+----------------------------------------------------------------------------------------------------------------------*/
+
+    class Application {
+        public static void run(String [] args)
+        {
+    	var now = new GregorianCalendar ();
+
+    	Console.writeLine("%02d/%02d/%04d %02d:%02d:%02d.%03d",
+    		now.get(Calendar.DAY_OF_MONTH),
+    		now.get(Calendar.MONTH) + 1,		//gerçek ay bilgisi için + 1 eklemek gerekiyor çünkü 0 dan başlıyor
+    		now.get(Calendar.YEAR),
+    		now.get(Calendar.HOUR_OF_DAY),
+    		now.get(Calendar.MINUTE),
+    		now.get(Calendar.SECOND),
+    		now.get(Calendar.MILLISECOND));
+       }
+    }
+
+	
+/*----------------------------------------------------------------------------------------------------------------------
+    GregorianCallendar sınıfının ctorları  ile istenilen tarih üretilebilir.
+        var now = new GregorianCalendar (2023, Calendar.MAY, 30, 21, 53, 23);
+
+    Geçersiz veri girildiğinde hata vermez bir takım hesaplar yaparak bir düzenleme yaparak uygun tarihe tamalar Tarih 
+    zamana ilişkin verilerin geçerlilik kontrolü yapmaz. Yani gün bilgisine 12131 girersek bir takım işlemler yaparak uygun 
+    tarihi hesaplayarak ughun tarih zaman bilgisine dönüştürür yani hata fırlatmaz, ve verdiği tarih geçersiz değildir. 
+
+
+    var now = new GregorianCalendar (2023, Calendar.MAY, 23430, 21, 53, 23);
+       Burada 2023 mayıs  21.53.23  yerine 2053…. gibi bir geçerli tarih verir
+
+    getTimeInMillis() metodu epoch timedan şuan a kadar geçen milisaniye değerine geri döner.
+     
+    Calendar sınıfının getActualMaximum ve getActualMimimum metotları aldıkları field'a karşılık gelen bilgiye göre o 
+    field'ın en büyük ve en küçük değerin döndürür. after ve before metotları iki Calendar bilgisini karşılatırmak için 
+    kullanılabilir.
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+    class Application {
+        public static void run(String [] args)
+        {
+            var month = Console.readInt("Son kullanma tarihi ay bilgisini giriniz:");
+            var year = Console.readInt("Son kullanma tarihi yıl bilgisini giriniz:");
+            var expiryDate = new GregorianCalendar(year, month - 1, 1);
+            var now = new GregorianCalendar();
+
+            expiryDate.set(Calendar.DAY_OF_MONTH, expiryDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+            if (now.after(expiryDate))
+                Console.writeLine("Son kullanma tarihi geçmiştir");
+            else
+                Console.writeLine("Son kullanma tarihi geçmemiştir");
+        }
+    }
+ 
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    19-01-06-2023 
+    Doğum günü uygulamaları 
+
+    Deligate metod -> içeride private olarak tutulan sınıfın bir metodunun yine aynı isimle dışarıya public olarak 
+    verilmesine denir 
+
+    DateTime sınıfı ve sınıfın patternleri
+        DateTimeFormatter.ofPattern
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    20-06-06-2023
+    Milisaniyeye çevirme kalıpları
+    Bitsel operatörler 
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    21-08-06-2023 
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Java'da bir tamsayının bitleri üzerinde işlem yapan bir grup operatör vardır:
+    ~                               -------> bitwise not
+    << >> >>>                       -------> bitwise left shift, right shift, unsigned right shift
+    &                               -------> bitwise and
+    ^                               -------> bitwise xor (exclusive or)
+    |                               -------> bitwise or
+    >>= <<= >>>= &= |= ^=           -------> bitwise compound/augmented assignment
+    
+    Buradaki operatörlewr öncelik sırasına (precedence) yazılmıştır. Bu operatörler gerçek sayı türleri ile kullanılamazlar. 
+    Bir kaç özel durum dışında boolean türü ile de kullanılamazlar. Yani bu operatörler tamsayı türleri ve integral/integer             
+    promotion dolayısıyla char türü ile de kullanılabilirler
+
+    <<  sola kaydırma: 
+        val = 0000000000000001;    val <<= 1;    yeni değer =    0000000000000010;
+
+    >>  sağa kaydırma   
+        Bu operatör taşan bitler için soldan sayı negatifse 1, pozitif veya sıfır ise sıfır biti ile besleme yapar.
+
+    >>> işaretsiz sağa kaydırma 
+        sıfır biti ile besleme yapar 
+
+    Bir tamsayıyı bitsel olarak 1 sola kaydırnmak sayıyı iki ile çarpmaktır, bitsel olarak 1 sağa kaydırmak ise (>>) o 
+    sayıyı ikiye bölmektir
+
+
+
+    xor (exclusive or) operatörünün (^) doğruluk tablosu şu şekildedir:
+        a       b          a ^ b
+        1       1            0
+        1       0            1
+        0       1            1
+        0       0            0
+
+    Buna göre bir sayı kendisiyle xor işlemine sokulursa sıfır elde edilir. Bir tansayı arka arkaya aynı değerler ile
+    xor işlemine sokulursa tamsayının kendisi elde edilir. Bu özelliği dolayısıyla şifreleme algoritmalarında 
+    kullanılmaktadır
+
+    Bir sayının herhangi bir bitinin 1 yapılması, yani set bit işlemi;
+
+    Burada yapılacak işlem kaçıncı bit 1 yapılmak isteniyorsa 1 sayısını o kadar left Shift yapıp sonrasında  o sayı 
+    ile elde ettiğimiz sayıyı or işlemine sokarak yapılabilir 
+
+    Val = 1010 1010 0110;       
+    ->  4. Biti 1 yapmak istiyorsak 1 sayısını 4 leftshit yapıp sonrasında bu çıkan sayı ile sayımızı orlayacağız
+    Val | 1 << 4;
+
+
+    1 sayısının 4 ile leftshift yapılması 
+
+    0000 0000 0001;
+    0000 0000 1000;
+
+    Val ile elde edilen sayının or( | ) işlemine sokulması 
+
+    1010  1010   0110
+    0000  0000   1000
+
+    1010 1010 1110
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    22-13-06-2023
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    Bir sayının herhangi bir bitinin 0 yapılması, yani clear bit işlemi;
+
+    4. Biti 0 yapmak istiyorsak 1 sayısını 4 leftshit sonrasında bitwise not  ( ~ )  yapıp sonrasında bu çıkan sayı ile 
+    sayımızı And leyeceğız.
+
+    Bir tamsayının belirli bir bitinin değiştirilmesi (toggle-flip):
+        Bir tam sayının k-ıncı bitinin değerini "toggle" yapmak için k-ıncı biti 1 olan, diğer bitleri sıfır ola bir sayı
+        ile "XOR" işlmeine sokmak gerekir.
+
+    BitwiseUtil sınıfının metotlarını incele
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    23-15-06-2023 
+----------------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------------------------------------------------
+    Nested classes, java da iç ice tür bildirimleri
+
+    Sınıf içerisinde sınıf bildirimleri 4 şekilde yapılabilir
+    Local classes, 
+    static classes(nested classes), 
+    non-static classes (inner classes), 
+    anonymous classes 
+
+
+    * Bir metod içerisinde bildirilen sınıflara local classes denir, yalnızca bildirildiği blok boyunca görülür(scope)
+
+    * Yerel bir sınıf içerisinde kendisinden önce bildirilen yerel değişkenler ve parametre değişkenlerine erişilebilir.
+    Buna "capture" denir. Değişkenlerin yakalandığı metodun non-static olması gerekir.
+
+    * Yakalanırsa o değer değiştirilemez, değer değiştirilirse yakalanmaz. Buna efectiveley final denir.
+
+    * Java 8 ile birlikte bir yerel bir değişken ya da parametre değişkeni yakalandığında faaliyet alanı (scope) boyunca 
+    bir kez değer alabilir. Bu kavrama "effectively final" denilmektedir.
+----------------------------------------------------------------------------------------------------------------------*/
+
+    package org.csystem.app;
+
+    import com.karandev.util.console.Console;
+
+    class Application {
+        public static void run(String [] args)
+        {
+            var x = new A();
+
+            x.foo(10);
+        }
+    }
+
+    class A {
+        public void foo(int a)
+        {
+            var b = Console.readInt("Bir sayı giriniz:");
+
+            class Util {
+                //...
+                public int add(int c)
+                {
+                    return a + b + c;
+                }
+            }
+
+            var util = new Util();
+
+            Console.writeLine("Toplam:%d", util.add(20));
+        }
+    }
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    * Top level sınıflar static olarak bildirilemez
+
+    * Bir sınıfın içerisinde başka bir sınıf static olarak bildirilebilir (nested class) Bu şekilde bildirim aslında 
+    sınıfın static bir elemanı (member) olmaktır. Ve erişim belirleyicileri vardır ve kendi veri elemaları, metodları 
+    olabilir.
+
+    * Static bir sınıf ismine içerisinde olduğu sınıf dışından sınıf ismi ve nokta operatörü ile erişilir
+
+    * Static bir sınıfın içerisinde A sınıfının private bölümüne erişilebilir
+
+    Static sınıfların önemli yararlarından biri bir türün başka bir tür içerisinde mantıksal olarak anlamlı olmasıdır.
+    Yani örneğin UtilLib içerisinde yazıla BitwiseXXXX sınıflarının DataInfo static sınıfı aslında mantıksal olarak
+    Test sınıfında test işleminde kullanılan bir veriyi temsil eder. Buradaki kapsama composition ya da aggregation
+    ilişkisi ile karıştırılmamalıdır. Bu ilişkilerdeki kullanım nesneler düzeyindedir. Özellikle, org-csystem-util 
+    kütüphanesindeki BitWiseUtil sınıfının test kodlarına ilişkin sınıfları ve içlerinde bulunan static sınıfları 
+    inceleyiniz
+
+    composition ya da aggregation a bak
+----------------------------------------------------------------------------------------------------------------------*/
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    24-20-06-2023
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Builder kalıbı private sınıfa dışarıdan erişmemizi sağlayacak bir public sınıftır.
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte XMLElement nesnesi Builder nesnesi yardımıyla yaratılmıştır. Örneği XMLElement sınıfının
+    ctor'unun private olması gerektiği ve set metotlarının olmayacağını düşünürek inceleyiniz. Örnekte Builder tasarım
+    kalıbı ve fluent tasarım kalıbı birlikte kullanılmıştır (fluent builder)
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import com.karandev.util.console.Console;
+
+import java.util.ArrayList;
+
+class Application {
+    public static void run(String [] args)
+    {
+        var xmlBuilder = new XMLElement.Builder();
+
+        var xmlElement = xmlBuilder.setTag("meaning").setValue("An object..").addAttribute("order", "2").build();
+
+        Console.writeLine(xmlElement.getTag());
+        //...
+    }
+}
+
+class XMLElement {
+    private String m_tag;
+    private final ArrayList<String> m_attributes;
+    private String m_value;
+
+    public static class Builder {
+        private final XMLElement m_xmlElement = new XMLElement("", "", new ArrayList<>());
+
+        public Builder setTag(String tag)
+        {
+            m_xmlElement.m_tag = tag;
+
+            return this;
+        }
+
+        public Builder setValue(String value)
+        {
+            m_xmlElement.m_value = value;
+
+            return this;
+        }
+
+        public Builder setValue(XMLElement xmlElement)
+        {
+            //...
+
+            return this;
+        }
+
+        public Builder addAttribute(String name, String value)
+        {
+            m_xmlElement.m_attributes.add(String.format("\"%s\"=\"%s\"", name, value));
+
+            return this;
+        }
+        public XMLElement build()
+        {
+            return m_xmlElement;
+        }
+    }
+
+    private XMLElement(String tag, String value, ArrayList<String> attributes)
+    {
+        m_tag = tag;
+        m_attributes = attributes;
+        m_value = value;
+    }
+
+    public String getTag()
+    {
+        return m_tag;
+    }
+
+    public ArrayList<String> getAttributes()
+    {
+        return m_attributes;
+    }
+
+    public String getValue()
+    {
+        return m_value;
+    }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------
+    inner class türünden bir nesne yaratılabilmesi için kapsayan sınıf türünden bir nesnenin referansı gerekir. 
+    inner class türünden bir nesne sınıf dışında <referans>.new sentaksı ile yaratılır. Burada referans kapsayan sınıf 
+    türünden olmadır.Şüphesiz bu referansında bir nesneyi göstermesi gerekir. Daha yalın bir ifade ile inner class 
+    türünden bir nesne onu kapsayan sınıf türünden bir nesne kullanılarak yaratılabilir. inner class'ların byte kodu da
+    nested class'larda olduğu gibi isimlendirilir.
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+class Application {
+    public static void run(String [] args)
+    {
+        var a = new A();
+        var b = a.new B();
+        var x = new A();
+        var y = x.new B();
+        var z = x.new B();
+        var t = new A().new B();
+
+        //...
+    }
+}
+
+class A {
+    public class B {
+        //...
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+    Aşağıdaki örnekte metodun kendisini çağırmasını engellemek için "this expression" kullanılmıştır. this expression
+    <sınıf ismi>.this biçiminde kullanılır. Bu durumda örnekteki B'nin foo metodunun çağrılmasında kullanılan referansın
+    gösterdiği nesnenin yaratılmasında kullanılan A nesnenin referansına erişilmiş ve non-static foo metodu çağrılmıştır
+----------------------------------------------------------------------------------------------------------------------*/
+package org.csystem.app;
+
+import com.karandev.util.console.Console;
+
+class Application {
+    public static void run(String [] args)
+    {
+        var a = new A();
+        var b = a.new B();
+
+        b.foo(10);
+
+        Console.writeLine(a.getValue());
+    }
+}
+
+class A {
+    private int m_value;
+    private void foo(int a)
+    {
+        Console.writeLine("A.foo");
+    }
+    //...
+    public class B {
+        public void foo(int value)
+        {
+            m_value = value;
+            A.this.foo(value);
+        }
+    }
+
+    public int getValue()
+    {
+        return m_value;
+    }
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------------
+                                                    25-22-06-2023
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------------------------*/
