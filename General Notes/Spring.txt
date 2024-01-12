@@ -55,6 +55,18 @@
 	lazy ile singelton yaratılması anlamlı bu sayede hem istediğimizde yaratmış hemde 1 kere yaratmış yani ikinciye
 	istendiğinde yine aynı nesnenin verilmesi sağlanmış olur.
 
+	SOLİD prensipleri
+
+	Single Responsibility	-> Her sınıfın kendi görevinin olması
+	Open Closed				-> öyle bir kod yaz ki o kadu genişletmek için kodla oynamak zornda kalma ( örnek inhertance)
+	Liskov Substitution		-> Türden bağımsız kod yaz (polymorphism)
+	Interface Segragation	-> Gereksiz yere türleri soyutlama (oyunda kapılar var bazıları zamalı bazıları normal) 
+								kapı ve zamanı ayrı soyutla gereklide kullan (interface)
+	Dependency Inversion	-> Bağımlılığı ters çevirme ilkesi
+				ileri tarihte işim varsa önce gideceğimize karar veriyoruz sonra günü geldiğinde detayları halledeceğiz
+				yani önce genel sınıf soonra kullanırken implimentasyon detaylarını yazıyoruz. bir ay sonra gideceğimiz 
+				davetin hava durumunu trafiğini şimdi düşünmenin mantığı yok
+
 
 	@Autowired
 		nesnenin hangi constructor ile yaratılacağını belirlememize yarar nesne hangi ctor ile yaratılacaksa o ctoru 
@@ -109,7 +121,7 @@
 
 
 /*----------------------------------------------------------------------------------------------------------------------
-	property injection, enjekte edeceğimiz beani burada Qualifier ile veriyoruz.
+	property injection(setter injection), enjekte edeceğimiz beani burada Qualifier ile veriyoruz.
 ----------------------------------------------------------------------------------------------------------------------*/
 
 	@Component
@@ -138,6 +150,10 @@
 
 /*----------------------------------------------------------------------------------------------------------------------
 	field injection
+
+	önerilmez, hatalı değil,  private eleman setter da olmadan enjekte ediyorsak, muhtemel değiştirilmeyen elemandır 
+	final yapılıyordur. ama final yapamıyoruz çünkü final eleman değeri üç yerde alır. Bu yüzden git elemanı final yap 
+	ctor injection yap
 ----------------------------------------------------------------------------------------------------------------------*/
 	@Component
 	public class TimeDisplay {
@@ -155,29 +171,39 @@
 	    }
 	}
 
-/*----------------------------------------------------------------------------------------------------------------------
-	SOLİD prensipleri
 
-	Single Responsibility	-> Her sınıfın kendi görevinin olması
-	Open Closed				-> öyle bir kod yaz ki o kadu genişletmek için kodla oynamak zornda kalma ( örnek inhertance)
-	Liskov Substitution		-> Türden bağımsız kod yaz (polymorphism)
-	Interface Segragation	-> Gereksiz yere türleri soyutlama (oyunda kapılar var bazıları zamalı bazıları normal) 
-								kapı ve zamanı ayrı soyutla gereklide kullan (interface)
-	Dependency Inversion	-> Bağımlılığı ters çevirme ilkesi
-				ileri tarihte işim varsa önce gideceğimize karar veriyoruz sonra günü geldiğinde detayları halledeceğiz
-				yani önce genel sınıf soonra kullanırken implimentasyon detaylarını yazıyoruz. bir ay sonra gideceğimiz 
-				davetin hava durumunu trafiğini şimdi düşünmenin mantığı yok
+
+/*----------------------------------------------------------------------------------------------------------------------
+	Dependency Inversion özel bir durum, bağımlılığın dışarıdan enjekrte edildiğini biliyoruz. 
+
+	
 
 ----------------------------------------------------------------------------------------------------------------------*/
 
-/*----------------------------------------------------------------------------------------------------------------------
 
+
+
+
+/*----------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------------------------------------------------
-
 ----------------------------------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------*/
 
+/*----------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------*/
