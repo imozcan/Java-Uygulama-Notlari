@@ -255,6 +255,9 @@ External Libriries nedir?
 .idea dosyası nedir?
     Bunlar intellıje ye ozgu dosyalardır.Buradaki her şey ide' nin kendisine ait olan dosyalardır. Bunlarla bir işimiz yoktur.
 
+
+    
+
 ----------------------------------------------------------------------------------------------------------------------*/
 
 
