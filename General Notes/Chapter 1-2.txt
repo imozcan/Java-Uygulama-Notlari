@@ -12,9 +12,6 @@ Maven'a terminal üzerinden de erişilebilir. Yani Bunlar terminalden de yapıla
 Pakage üretilmesi/ ürün üretilmesi ara ve son aşamada yapılır. Ürün haline getirilir.
 
                                              MAVEN
-
-
-
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -25,6 +22,12 @@ Pakage üretilmesi/ ürün üretilmesi ara ve son aşamada yapılır. Ürün hal
 
 
 **** pom.xml de En az bu üç bilginin bulunması yerlidir *****
+pom.xml nedir?
+    Maven 'ın dilidir. 
+    Bir programlama dili değildir bu yüzden bir akışa sahip değildir. 
+    xml bilgisayar dilini kullanır. Maven a direktifler verir.Her direktif pom.xml içerisinde yazılır. Maven bu direktifleri
+    install ettiğinde (mvn install komutu ile ) jar dosyası oluşturulur ve ardından locale atar. Ancak mvn package denilirse 
+    terminal üzerinden sadece jar dosyası olusturulur.
 
 <groupId>org.csystem</groupId>
     Paket isimlendirme java da domain ters çevrilecek kullanılır. Bu da projelerde id çakışması önlenir. (Dünya geneli)
@@ -53,16 +56,12 @@ Pakage üretilmesi/ ürün üretilmesi ara ve son aşamada yapılır. Ürün hal
     ürünün tanımı
 
 
-
-
 <repositories>
     <repository>
         <id>JavaApp1-Mar-2023</id>
         <url>https://raw.github.com/oguzkaran/javaapp1-mar-2023-maven-repo/main</url>
     </repository>
 </repositories>
-
-
 
 
 Uzaktan Kullandığımız repoları gösteriyoruz. (GitHub destekliyor.)
@@ -74,6 +73,9 @@ Maven da install yaparsak
     her işletim sisteminde uygun yere kurulu olan .m2  diye bir directory oluşur library leri oraya koyar. 
     Grup id orada bir directory oluşturur (org ) oraya onu koyar versiyon da da aynı şekilde yine directory oluşturur
     ve jar dosyalarının onun altın a koyar.
+
+Maven da package yaparsak
+    plugini çalıştırır ve onun çıktısı olan jar dosyasını üretir.    
 
 
 .m2 maven local reposiyory dir.
@@ -101,9 +103,6 @@ Bu bir yöntemidir farklı yöntemleri anlatılacak
 
 Jar -jar Yourapp.jar Şeklinde çalıştırabiliyoruz terminalde.
 ----------------------------------------------------------------------------------------------------------------------*/
-
-
-                     
 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -148,8 +147,6 @@ Remote ta bulursa indirir ve locale koyar ikinciye gidip url üzerinden bakmaya 
 </repositories>
 ----------------------------------------------------------------------------------------------------------------------*/
 
-
-
 /*----------------------------------------------------------------------------------------------------------------------
 Yeni projemiz  001-
 
@@ -165,9 +162,6 @@ Her java dosyamızın üzerine Convention koymak yerinde olacaktır.
     Copyleft (c) 1993 by C and System Programmers Association (CSD)
     All Rights Free
 -----------------------------------------------------------------------
-
-
-
 
 Yeni projenin Maven dosyası
         Projemizin pom dosyası——— (ilk derste açıklamaları yapıldı)
@@ -250,6 +244,16 @@ Bu yöntemi kullanırsak pom dosyasında bu düzenlemeyi yapmamız gerek
     </configuration>
 
 <plugin>
+
+plugin nedir?
+    plugin bir şeyi bir şeye eklemek anlamındadır.Maven bu pluginlere ilişkin programların hepsini çalıştırıp bir executable
+    jar üretimini sağlar.
+
+External Libriries nedir?
+    Standard lib dir. Derleyici için anlamlıdır. Buradaki kütüphaneleri kullanmak için herhangibir şey yapılmasıan gerek yoktur.
+
+.idea dosyası nedir?
+    Bunlar intellıje ye ozgu dosyalardır.Buradaki her şey ide' nin kendisine ait olan dosyalardır. Bunlarla bir işimiz yoktur.
 
 ----------------------------------------------------------------------------------------------------------------------*/
 
